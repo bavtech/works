@@ -5,21 +5,31 @@ import win32api
 PowerInteruptionCount = dict()  
 counter =1 
 init_state =  False
-threshold = ""
+threshold = "60"
+
+
+
 '''
 sets the battery life to 60% by default if it crosses or reaches that level it shuts down 
-if you want to seconds between intervals of power in and power out  
+if you want to use seconds between intervals of power in and power out   then 
 '''
 
 def Usage():
     global threshold
-    __ = input("Enter precentage level before computer hibernates >>> ")
-    threshold = int(__) if __.isdecimal()  else  False 
+    if threshold:
+        
+        return threshold 
+    
+    else:
 
-    if threshold > psutil.sensors_battery().percent :
-        print("value supplied is greater than current battery level ")
+        __ = input("Enter precentage level threshold before pc hibernates >>> ")
 
-    return threshold 
+        threshold = int(__) if __.isdecimal()  else  False 
+
+        if threshold > psutil.sensors_battery().percent :
+            print("value supplied is greater than current battery level ")
+
+        return threshold 
 
 
 

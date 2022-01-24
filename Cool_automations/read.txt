@@ -1,1 +1,4 @@
 this hibernate on request is a file that hibernates your windows pc based off an  input (percentage) you specify.
+
+currently this works for only windows pc, if you want it to work for  mac or linux
+google out the commandline code for hibernating and replace it into the hibernate function
