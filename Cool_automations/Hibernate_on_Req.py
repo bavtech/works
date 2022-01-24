@@ -34,7 +34,7 @@ def Usage():
 
 
 def HIB():
-    #Hibernates the system
+    #Hibernates the system  
     
     # win32api.SetSystemPowerState(False,True) 
     os.system("shutdown /h")
@@ -114,6 +114,3 @@ if __name__ == "__main__":
                             
                         # take ACtion here
                 
-            
-print(Usage() - 10)
-# print(psutil.sensors_battery().power_plugged)
