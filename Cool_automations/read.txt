@@ -1,4 +1,9 @@
-this hibernate on request is a file that hibernates your windows pc based off an  input (percentage) you specify.
+HibernateOnRequest: 
+	this hibernate on request is a file that hibernates your windows pc based off an  input (percentage) you specify.
+	currently this works for only windows pc, if you want it to work for  mac or linux
+	google out the commandline code for hibernating and replace it into the hibernate function
 
-currently this works for only windows pc, if you want it to work for  mac or linux
-google out the commandline code for hibernating and replace it into the hibernate function
+LocateWord:
+	
+	this searches through all the Microsft word file on your system and checks for the word you specify  that it checks for .
+	you can always change the working directory file to what ever you choose .
