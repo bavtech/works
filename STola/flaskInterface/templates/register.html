@@ -1,0 +1,65 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <div class="container relative">
+        <div class=" bg-[url('/static/img/img2.jpg')] flex flex-col items-center justify-center w-screen h-screen  bg-cover bg-no-repeat blur-lg">
+            
+        </div>
+        <div class="absolute text-2xl top-0 font-oswad">
+            HOME
+        </div>
+        <div class="bg-white bg-orange-400- w-1/4   rounded-3xl flex flex-col justify-between  px-5 absolute top-1/4 left-2/4">
+            
+            <h1 class="text-center text-2xl font-itali text-orange-600 my-10 animate-bounce ">Create Account</h1>
+       
+          <div class="flex flex-col justify-around">
+
+
+                <form method="POST" >
+                    {{form.hidden_tag()}}
+
+                    <div class="hover:animate-pulse mb-2">
+                        <!-- <label for="email" class="block  text-lg font-medium text-gray-600 ">Email</label> -->
+                      
+                        {{form.email.label(class='block  text-lg font-medium text-gray-600')}}
+                        {{form.email(class='bg-gray-50 border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5')}}
+                        
+                        {% if form.errors %}
+                        <div class="text-red-600">
+                                {{form.errors.data}}
+                        </div>
+                        {%endif%}
+                        <!-- <input type="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="E-mail Address"> -->
+                   
+                    </div>
+
+                    <div>
+
+                        {{form.username.label(class="block  text-lg font-medium text-gray-600 ")}}
+                        {{form.username(class="bg-gray-50 border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ") }}
+                 
+                    </div>
+
+                    <div>
+                        {{form.password.label(class="itali  block  text-lg font-medium text-gray-600")}}
+                        {{form.password(class="bg-gray-50 border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ")}}
+                    
+                    </div>
+                    
+                    <div>
+                        {{form.confirm_password.label(class="itali  block  text-lg font-medium text-gray-600")}}
+                        {{form.confirm_password(class="bg-gray-50 border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ")}}
+                    </div>
+                    
+                   
+                    
+                    {{form.submit(class=" bg-orange-600 p-3 rounded-xl mt-6 text-white font-bold mb-4 ")}} 
+                    
+                </form>
+            </div>
+        </div>
+
+    </div>
+    
+    
+{% endblock content %}

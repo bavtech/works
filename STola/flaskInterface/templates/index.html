@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/output/styles.css') }}">
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,400;0,500;1,800&family=Oswald:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Italianno&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,400;0,500;1,800&display=swap" rel="stylesheet">
+    
+</head>
+<body>
+{%with  messages = get_flashed_messages(with_categories=true)%}
+    {% if messages %}
+        {%for category, message in messages%}
+
+        <div class="space-y-2 px-2 py-2">
+            <div class="alert text-red-800 bg-red-100 alert-closable text-lg" role="alert" x-data="{ open: true }" x-show.transition="open">
+              {{ message }}
+            </div>
+          </div>  
+            <!-- <div  role="alert" class="bg-red-600 border border-red-400 text-red-700 px-4 py-3">
+
+                {{message}}
+
+            </div> -->
+        {%endfor%}
+    {%endif %}
+{%endwith%}
+
+{% block content %}
+<div class="container">
+    <div class="my-bg w-screen h-screen bg-no-repeat  bg-cover bg-opacity-100 from ">
+
+        <nav class="bg-opacity-10  flex flex-row   justify-end">
+               <div class="flex flex-row font-itali font-black text-xl text-white mt-4 w-2/4 justify-around  ">
+
+                
+
+                    {% if current_user.is_authenticated%}
+                     <a href="{{ url_for('logout')}}">Logout</a>
+                     <a href="{{ url_for('Job')}}">Create Task</a>
+                    {%else%}
+                    
+                    <a href="{{ url_for('Login')}}">Login</a>
+                    <a href="{{ url_for('register')}}">Sign up</a>
+                    {%endif%}
+
+               
+
+               </div> 
+        </nav>
+
+
+        <div class=" w-2/5 text-center text-white leading-2 py-6 flex flex-col flex-wrap   font-patrick  font-extrabold ml-5 mt-1  text-7xl">
+             YOUR  ONE STOP GENERAL PURPOSE ARTIFICIAL INTEIGENCE TOOL
+        </div>
+    </div>
+</div>
+
+{%endblock content %}
+</body>
+
+</script>
+</html>

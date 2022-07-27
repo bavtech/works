@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.my-bg{
+    background-image:linear-gradient(rgb(0, 0, 0,0.5), rgba(7, 6, 7, 0.6)), url(/static/img/img4.jpg)
+
+}
+.my-height{
+    line-height: 5%;
+}

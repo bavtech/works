@@ -1,0 +1,47 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <div class="container relative">
+        <div class=" bg-[url('/static/img/img2.jpg')] flex flex-col items-center justify-center w-screen h-screen  bg-cover bg-no-repeat blur-lg">
+            
+        </div>
+        <div class="absolute text-2xl top-0 font-oswad">
+            HOME
+        </div>
+        <div class="bg-white bg-orange-400- w-1/4   rounded-3xl flex flex-col justify-between  px-5 absolute top-1/4 left-2/4">
+            
+            <h1 class="text-center text-2xl  font-itali text-orange-600 my-10 animate-bounce ">CREATE DOMAIN</h1>
+       
+          <div class="flex flex-col justify-around">
+
+
+                <form method="POST" >
+                    {{form.hidden_tag()}}
+                    
+                    <div>
+
+                        {{form.title.label(class='block  text-lg font-medium text-gray-600')}}
+                        {{form.title(class='bg-gray-50 border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5')}}
+                    
+                    </div>
+
+                    <div>
+                        {{form.description.label(class='block  text-lg font-medium text-gray-600')}}
+                        {{form.description(class='bg-gray-50 border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5')}}
+                    </div>
+                  
+                   
+                   
+                   
+                    <div>
+                        
+                        {{form.submit(class='bg-orange-600 p-2 w-3 rounded-lg text-lg mt-6 text-white font-bold')}}
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+    
+    
+{% endblock content %}
