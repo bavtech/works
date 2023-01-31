@@ -82,13 +82,13 @@ def on_click(x, y, button, pressed):
                     origin_clicked =  True 
                     X,Y  = x,y 
 
-                    print("Left button pressed at ({0}, {1})".format(x, y))
+                    print("ORIGIN AT ({0}, {1})".format(x, y))
                     notify("MESSAGE","SELECT LOCATION TWO TO COMPLETE SCREENSHOT","AA")
 
             elif button == mouse.Button.left and origin_clicked == True:
                 
                 if pressed:
-                    print("Right button pressed at ({0}, {1})".format(x, y))
+                    print("FINAL POINT AT ({0}, {1})".format(x, y))
    
                     print()
                     origin_clicked =  False 
@@ -111,12 +111,23 @@ def ready(x,y,pressed):
     if pressed:
         
         ready2click = not ready2click
-        notify("MESSAGE","SCREENSHOT ACTIVATED",'SCREENSHOT DEACTIVATED') 
+        notify("MESSAGE","SCREENSHOT ACTIVATED",'SCREENSHOT DEACTIVATED ORIGIN SET TO (0,0) ') 
      
         if ready2click == False:
             x,y,width,height=0,0,0,0
               
 if __name__ == '__main__':
+    print("""\nNOTE:You would need an external mouse for this to work.\n
+THIS IS NOT A CLICK ONE POINT AND DRAG TO ANOTHER POINT PROGRAM ,
+THIS IS A CLICK ONE POINT ,THEN CLICK ANOTHER POINT AND A SCREENSHOT THAT FALLS WITHIN THE INITLA AND FINAL POINT WOULD BE  SAVED TO THE SAME PATH WHERE THE SCRIPT IS LOCATED.\n\n
+    
+    YOU WOULD GET A NOTIFICATION FROM  TIME TO TIME ON WHAT TO DO
+        
+    \n1. press the middle mouse button to activate the listener 
+   \n2. click first point 
+   \n3. click second point that forms a rectangle.
+   \n4. If you are unsure of the points previously clicked, press the middle mouse button twice and it would reset the point
+    """)
     try:
 
         with mouse.Listener(on_click=on_click) as listener:
