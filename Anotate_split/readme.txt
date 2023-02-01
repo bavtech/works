@@ -1,4 +1,4 @@
-the script should be in the same folder as the images and label . i.e the script should have  the same hierarchy as the images and label folder
+the script should be in the same folder as the images and labels folder . i.e the script should have  the same hierarchy as the images and label folder
 .
 ├── file_train_test_split.py
 ├── images
@@ -9,6 +9,6 @@ copy the images you wish to anotate into the  images folder and their correspond
 
 then run the file_train_test_split.py
 
-it would create automatically the train and val folder with their respective images and label folder found within them with the files  placed accordingly.
+it would create automatically the train and val folder with their respective images and label folder with the files  placed accordingly.
 
-by default 1 of every 5 files is picked for validation 
+By default 1 of every 5 files copied into train  is picked and copied into the val path. 
