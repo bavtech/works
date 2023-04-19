@@ -1,4 +1,4 @@
-# this program was not tested on windows  but on linux,this doesnt work on windows, but it runs without errors on a linux pc so long as the requirements were installed.
+# this program was not tested on windows  but on linux it runs without errors  so long as the requirements are installed.
 
 1. pip install requirement.txt
 2. run the  script 
