@@ -117,7 +117,7 @@ def ready(x,y,pressed):
             x,y,width,height=0,0,0,0
               
 if __name__ == '__main__':
-    print("""\nNOTE:You would need an external mouse for this to work.\n
+    print("""\nNOTE:You would need an external mouse or a  3 fingers enabled touchpad for those whose trackpad supports 3 fingers in order for this to work.\n
 THIS IS NOT A CLICK ONE POINT AND DRAG TO ANOTHER POINT PROGRAM ,
 THIS IS A CLICK ONE POINT ,THEN CLICK ANOTHER POINT AND A SCREENSHOT THAT FALLS WITHIN THE INITLA AND FINAL POINT WOULD BE  SAVED TO THE SAME PATH WHERE THE SCRIPT IS LOCATED.\n\n
     
