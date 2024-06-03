@@ -148,8 +148,19 @@ while running:
     
     frame =  ImageGrab.grab(SCREEN_CAPTURE)
     
+    
     height,width =  frame.height, frame.width 
     
+    frame=  np.array(frame)
+    
+    v_cut1 =  int(height//2) -370
+    v_cut2 =  int(height//2) + 600
+    
+    frame[0:v_cut1, ::] = [255, 255,255]
+    frame[v_cut2:, ::] = [255, 255,255]
+
+    
+    frame =  Image.fromarray(frame)
     
     results = model.predict(frame,conf=confidence,verbose=False)[0]
     results = results.cpu().boxes.xyxy.numpy()
@@ -169,15 +180,8 @@ while running:
 
 
 
-# 
-#   CREATE A BOUNDING BOX NOT AT THE EDGE AND NOT AT THE BOTTOM INBETWEEN 
-#   TO MAKE THE BOMB MORE VISIBLE TO FOR THE AI TO PLAY
-# 
-        
-        
-    
-    
-
-    
+# USE SPACEBAR TO TOGGLE WHEN THE AI DETECTS
+# PLUS AND MINUS TO INCREASE OR DECREASE CONFIDENCE LEVEL
+# BUTTON Q OR EXIT TO QUIT THE PROGRAM
     
   
