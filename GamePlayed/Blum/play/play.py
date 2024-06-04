@@ -2,6 +2,7 @@ import random
 import string
 import subprocess
 from time import sleep
+import time
 from PIL import ImageGrab,Image
 import cv2
 import numpy as np
@@ -84,7 +85,8 @@ def on_release(key):
             running = False
             return False 
     except Exception as e:
-        print("Not recognized")
+        # print("Not recognized")
+        pass
 #         # Stop the listener
 
 
@@ -129,7 +131,31 @@ def getCenter(coor):
     center_y =  int(y_min + y_max)//2
     
     return center_x,center_y
+temp='' 
+ma = ''
+def colorDetected(pixel):
+    global temp ,SCREEN_CAPTURE,ma
+    x1,y1,x2,y2 =  SCREEN_CAPTURE[0]+ pixel[0], SCREEN_CAPTURE[1]+ pixel[1], SCREEN_CAPTURE[0]+ pixel[2],SCREEN_CAPTURE[1]+pixel[3]
+    frame2 = ImageGrab.grab(bbox=(x1,y1,x2,y2))
+    frame2 =  np.array(frame2)
+    hsv = cv2.cvtColor(frame2, cv2.COLOR_RGB2HSV)
+
+
+    blurred_image = cv2.blur(hsv, (15, 15))
+    ma=hsv
+
+    lower_bound = np.array([35, 50, 50],dtype=np.uint8)  
+    upper_bound = np.array([85, 255, 255], dtype=np.uint8)
     
+    mask =  cv2.inRange(blurred_image, lower_bound, upper_bound)   
+
+    temp=mask
+    
+    if cv2.countNonZero(mask)>0:
+        return True
+    
+    else:
+        return False
     
     
 # SCREEN_CAPTURE =  getCordinate('samsung')
@@ -138,14 +164,16 @@ listener.start()
 paused=  False 
 gap =440
 
-confidence=.93
+confidence=.91
 mouse =  Controller()
 # sleep(5)
 model =  YOLO("best.pt",verbose=False)
-SCREEN_CAPTURE =  getCordinate('samsung')
+prev=(0,0)
 while running:
 #     #     # Capture frame from screen
-    
+    SCREEN_CAPTURE =  getCordinate('SAMSUNG')
+    # st =  time.time()
+
     frame =  ImageGrab.grab(SCREEN_CAPTURE)
     
     
@@ -153,31 +181,38 @@ while running:
     
     frame=  np.array(frame)
     
-    v_cut1 =  int(height//2) -370
-    v_cut2 =  int(height//2) + 600
+    # v_cut1 =  int(height//2) -300
+    # v_cut2 =  int(height//2) + 600
     
-    frame[0:v_cut1, ::] = [255, 255,255]
-    frame[v_cut2:, ::] = [255, 255,255]
+    # frame[0:v_cut1, ::] = [255, 255,255]
+    # frame[v_cut2:, ::] = [255, 255,255]
 
     
     frame =  Image.fromarray(frame)
     
     results = model.predict(frame,conf=confidence,verbose=False)[0]
     results = results.cpu().boxes.xyxy.numpy()
-    print(len(results),"Flakes Found")
+    print(len(results),"Flakes Found",end='\r')
     if paused:
         
         for result in results:
             
-            center = getCenter(result)
             
-            # pyautogui.click(SCREEN_CAPTURE[0]+center[0], center[1]+SCREEN_CAPTURE[1],clicks=1)
-            x =  SCREEN_CAPTURE[0]+ center[0]
-            y =  SCREEN_CAPTURE[1]+ center[1]
-            
-            mouse.position=(x,y)
-            mouse.click(Button.left,1)
+                
+                center = getCenter(result)
+                
+                # pyautogui.click(SCREEN_CAPTURE[0]+center[0], center[1]+SCREEN_CAPTURE[1],clicks=1)
+                x =  SCREEN_CAPTURE[0]+ center[0]
+                y =  SCREEN_CAPTURE[1]+ center[1]
+                
+                # if colorDetected(result):
+                if prev[0]!= x and prev[1]!=y:
+                    mouse.position=(x,y)
+                    mouse.click(Button.left,1)
 
+                    prev =  (x,y)
+
+    # print(f"took {time.time() - st}")
 
 
 # USE SPACEBAR TO TOGGLE WHEN THE AI DETECTS
