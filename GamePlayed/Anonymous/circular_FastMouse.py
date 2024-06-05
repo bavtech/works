@@ -116,24 +116,31 @@ radius=10
 count = 0
 mouse =  Controller()
 coor= getMousePosition()
+try:
 
-while running:
+    while running:
     # count +=1
     # print(count)0
-    if onyourMark:
+        if onyourMark:
         
         # mpt =  getMousePosition()
         # x,y = random_point_in_circle(radius,coor)
-        x,y =  getMousePosition()
+            x,y =  getMousePosition()
 
         # pyautogui.click(x,y, clicks=clicks )
         # sleep(0.1)
         
-        mouse.position=(x,y)
-        mouse.click(Button.left,clicks)
-        sleep(0.05)
+            mouse.position=(x,y)
+            mouse.click(Button.left,clicks)
+            sleep(0.05)
         # print(clicks)
-print("loop ended")       
-        
-listener.stop()
-kListen.stop()
+except KeyboardInterrupt:
+    
+    listener.stop()
+    kListen.stop()
+    
+    listener.join()
+    kListen.join()
+    
+    print("Ended Gracefully")
+ 

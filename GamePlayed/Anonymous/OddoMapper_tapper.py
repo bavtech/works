@@ -136,20 +136,28 @@ def tappingwhat():
         if 'ham' in arguments[1]:
             combined_list =  hamster
  
-       
-    while running:
-        # print(1)
-        if onyourMark:
-            # print("i am in")
-            randint =  random.randint(1,len(combined_list))
-            val = select_random_characters(combined_list, randint)
-            
-            for i in val:
-                if i=='q':
-                    pass
-                else:
-                        
-                    pyautogui.press(i)
+    try:
+          
+        while running:
+            # print(1)
+            if onyourMark:
+                # print("i am in")
+                randint =  random.randint(1,len(combined_list))
+                val = select_random_characters(combined_list, randint)
+                
+                for i in val:
+                    if i=='q':
+                        pass
+                    else:
+                            
+                        pyautogui.press(i)
+    except KeyboardInterrupt:
+        listener.stop()
+        listener.join()
+        
+        print("loop Ended")
+        
 if __name__ == "__main__":
     print("keyboard input running")
+    
     tappingwhat()

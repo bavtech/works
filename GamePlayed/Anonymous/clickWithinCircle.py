@@ -102,15 +102,22 @@ except Exception as e:
     print("Wrong Value supplied can only be int")
     perClick=1
     
-while running:
+try:
     
-    if onyourMark:
+    while running:
+    
+        if onyourMark:
         
-        if onlyClick:
+            if onlyClick:
                 
-            x,y = random_point_in_circle(120,'samsung')
+                x,y = random_point_in_circle(120,'samsung')
 
-            pyautogui.click(x,y, clicks=perClick)
+                pyautogui.click(x,y, clicks=perClick)
             #sleep(3)
         # sleep(.5)
- 
+except KeyboardInterrupt:
+    listener.stop()
+    
+    listener.join()
+    
+    print("Ended")
