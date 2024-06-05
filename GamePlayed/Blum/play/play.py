@@ -20,7 +20,7 @@ from pynput.mouse import Listener, Button,Controller
 # THRESHOLD = ( 2135,550, 2615,800)
 
 counter =0
-
+device_name =  sys.argv
 
 clicker = False
 
@@ -33,18 +33,18 @@ def on_press(key):
     try:
         
         if key.char == '+':
-            if  confidence+ 0.02 > 1 :
+            if  confidence+ 0.01 > 1 :
                 confidence =1 
                 
             if confidence <1 :
                 # confidence +=0.02
-                refactor(0.02)
+                refactor(0.01)
                 print(f"Confidence score now{confidence}")
                 
         if key.char =='-':
             
             if confidence >0.5:
-                    refactor(-0.02)
+                    refactor(-0.01)
                     # confidence -=0.02
                     print(f"Confidence score now{confidence}")
             
@@ -64,11 +64,11 @@ def on_press(key):
                 
             if confidence <1:
                 # confidence +=0.02
-                refactor(0.02)
+                refactor(0.01)
                 print(f"Confidence score now{confidence}")
         if key == keyboard.Key.page_down:
             if confidence >0.5:
-                refactor(-0.02)
+                refactor(-0.01)
                 # confidence -=0.02
                 print(f"Confidence score now{confidence}")
                 
@@ -167,11 +167,12 @@ gap =440
 confidence=.91
 mouse =  Controller()
 # sleep(5)
-model =  YOLO("best.pt",verbose=False)
+model =  YOLO("red_det.pt",verbose=False)
 prev=(0,0)
+device_name =  device_name[1]
 while running:
 #     #     # Capture frame from screen
-    SCREEN_CAPTURE =  getCordinate('SAMSUNG')
+    SCREEN_CAPTURE =  getCordinate(device_name)
     # st =  time.time()
 
     frame =  ImageGrab.grab(SCREEN_CAPTURE)
@@ -181,11 +182,13 @@ while running:
     
     frame=  np.array(frame)
     
-    # v_cut1 =  int(height//2) -300
-    # v_cut2 =  int(height//2) + 600
-    
-    # frame[0:v_cut1, ::] = [255, 255,255]
-    # frame[v_cut2:, ::] = [255, 255,255]
+    if "samsung" in device_name.lower():
+        
+        v_cut1 =  int(height//2) -250
+        v_cut2 =  int(height//2) + 350
+        
+        frame[0:v_cut1, ::] = [255, 255,255]
+        frame[v_cut2:, ::] = [255, 255,255]
 
     
     frame =  Image.fromarray(frame)
