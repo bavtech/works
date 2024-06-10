@@ -36,7 +36,7 @@ def on_release(key):
 
 
 def on_press(key):
-    global  onlyClick, clicks, radius,onyourMark,coor 
+    global  onlyClick, clicks, radius,onyourMark,coor , sleeper
     try:
         
                
@@ -45,27 +45,42 @@ def on_press(key):
        
         if key.char=='+':
             clicks +=1
+            sleeper +=0.001
+            
+            sleeper =  f"{sleeper:.3f}"
+            sleeper =  float(sleeper)
             
         elif key.char =='-':
             if clicks==1:
                 pass
             else:
-                clicks -=1 
+                # clicks -=1 
+                sleeper -=0.001
+                sleeper =  f"{sleeper:.3f}"
+                sleeper =  float(sleeper)
         else:
             
             # print(key.char)
             char =  key.char
             char= int(char)
             
-            clicks=char 
-            # print("works")
-        print(f"Now Clickiing at speed {clicks}")
+            # clicks=char 
+            sleeper =  0.01 if char < 1 else 0.01 * char
+            sleeper =  f"{sleeper:.3f}"
+            sleeper =  float(sleeper)
+            # print("works")123
+        # print(f"Now Clickiing at speed {sleeper}")
+        print(f"speed now at {sleeper} " ,end='\r')
     
 #        
     except Exception as e:
-        # if key==keyboard.Key.space:
-        #     onyourMark =  not onyourMark
-            
+        if key==keyboard.Key.space:
+            onyourMark =  not onyourMark
+               
+            if onyourMark:
+                print("Now clicking")
+            else:
+                print("paused")
         #     print(onyourMark)
         #     # if onyourMark:
         #     coor= getMousePosition()
@@ -110,12 +125,13 @@ kListen.start()
 
 running= True 
 onyourMark=False
-clicks=1
+clicks=0
 
 radius=10
 count = 0
 mouse =  Controller()
 coor= getMousePosition()
+sleeper = 0.050
 try:
 
     while running:
@@ -127,12 +143,12 @@ try:
         # x,y = random_point_in_circle(radius,coor)
             x,y =  getMousePosition()
 
-        # pyautogui.click(x,y, clicks=clicks )
+        # pyautogui.click(x,y, clicks=clicks ) 
         # sleep(0.1)
         
             mouse.position=(x,y)
-            mouse.click(Button.left,clicks)
-            sleep(0.05)
+            mouse.click(Button.left,1)
+            sleep(sleeper)
         # print(clicks)
 except KeyboardInterrupt:
     
@@ -144,3 +160,7 @@ except KeyboardInterrupt:
     
     print("Ended Gracefully")
  
+# 17.8 @0.055
+# 19 @ 0.051
+# 18.6 @0.052
+# 
