@@ -130,7 +130,7 @@ def getCenter(coor):
     center_x =  int(x_min + x_max)//2
     center_y =  int(y_min + y_max)//2
     
-    return center_x,center_y
+    return y_max, (center_x,center_y)
 temp='' 
 ma = ''
 def colorDetected(pixel):
@@ -167,7 +167,7 @@ gap =440
 confidence=.91
 mouse =  Controller()
 # sleep(5)
-model =  YOLO("red_det.pt",verbose=False)
+model =  YOLO("red_det.pt",verbose=True)
 prev=(0,0)
 device_name =  device_name[1]
 while running:
@@ -182,10 +182,10 @@ while running:
     
     frame=  np.array(frame)
     
-    if "samsung" in device_name.lower():
+    if "samsung" in device_name.lower() or "personal" in device_name.lower():
         
-        v_cut1 =  int(height//2) -250
-        v_cut2 =  int(height//2) + 350
+        v_cut1 =  int((height//2) -(height * 0.25))
+        v_cut2 =  int((height//2) +(height*0.2)) 
         
         frame[0:v_cut1, ::] = [255, 255,255]
         frame[v_cut2:, ::] = [255, 255,255]
@@ -202,14 +202,14 @@ while running:
             
             
                 
-                center = getCenter(result)
+                flkH,center = getCenter(result)
                 
                 # pyautogui.click(SCREEN_CAPTURE[0]+center[0], center[1]+SCREEN_CAPTURE[1],clicks=1)
                 x =  SCREEN_CAPTURE[0]+ center[0]
                 y =  SCREEN_CAPTURE[1]+ center[1]
                 
                 # if colorDetected(result):
-                if prev[0]!= x and prev[1]!=y:
+                if int(prev[0])!= int(x) and int(prev[1]) != int(y):
                     mouse.position=(x,y)
                     mouse.click(Button.left,1)
 
