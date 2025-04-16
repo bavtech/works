@@ -26,6 +26,12 @@ VIS =  video_length
 VIS =  float(f"{VIS:.1f}")
 S_or_M =  "Minute" if video_length > 60 else "Seconds" 
 
+
+filename =  os.path.splitext(os.path.basename(filepath.name))[0]
+path2save = STORAGE
+counter=1
+starttime =time.time(
+
 print("The Length of video is {1} {0}".format(S_or_M,VIS if video_length < 60 else VIM))
 
 
@@ -43,20 +49,20 @@ while True:
         break 
     except ValueError:
         print("Incorrect value  enter a float or an integer , no strings")
+        
+        
+)
 
-path2save = STORAGE
-counter=1
-starttime =time.time()
 
 def save(name):
-    global counter, starttime
+    global counter, starttime,filename
     tmp = name
-    name =  f"{name}{counter}.jpg"
+    name =  f"{name}/{filename}-{counter}.jpg"
     
     while True:
         if os.path.exists(name):
             counter +=1
-            name =  f"{tmp}{counter}.jpg"
+            name =  f"{tmp}/{filename}-{counter}.jpg"
         else:
         
             cv2.imwrite(name, frame)
@@ -64,9 +70,7 @@ def save(name):
             starttime =  time.time()
             
             break
-        
-
-        
+           
 while video.isOpened():
     ret, frame = video.read()
     
@@ -79,8 +83,8 @@ while video.isOpened():
             save(f"{path2save}")
             
         # sleep(1)
-        if counter ==100:
-            break 
+        #if counter ==100:
+         #   break 
         if cv2.waitKey(int(fps)) & 0xFF == ord('q'):
             
             break
@@ -91,4 +95,4 @@ video.release()
 cv2.destroyAllWindows() 
 
 
-# fist trial 6 file at 5.3 sec 
+
