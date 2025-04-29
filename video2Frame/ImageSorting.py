@@ -18,14 +18,20 @@ def writeToFile(filename:str):
      
 def extract_number(filename):
     return int(filename[:-4])
+def attachCmd(cmd,filename,mapping):
 
+    dirname =  os.path.dirname(filename)
+    fN =  cmd+'_'+os.path.basename(filename)
+    
+    return os.path.join(mapping,fN)
+    
 
 def remainder(path):
     totalFile  = len(os.listdir(path))
     
     return totalFile 
     
-threshold = 20000   
+threshold = 12000   
 mappings =  {0:'ACTIONS/jump',1:"ACTIONS/left",2:"ACTIONS/right",3:"ACTIONS/noAction",4:"ACTIONS/roll"}
 class ImageViewer(App):
     def __init__(self, **kwargs):
@@ -98,15 +104,26 @@ class ImageViewer(App):
 
     def on_key_down(self, window, key, scancode, codepoint, modifiers):
         #print(f"Key pressed: {key} | Codepoint: {codepoint} | Modifiers: {modifiers}")
-
+        sz =  remainder(mappings[3])
+        
         if key == 32:
             #print("Space bar was pressed!")
-            self.current_image_index+=1 
-            if self.current_image_index > len(self.images)-1:
-                self.current_image_index=len(self.images) -1
-            self.image.source =  self.images[self.current_image_index]
-            writeToFile(self.image.source)
-        return False
+            if sz >=threshold:
+                self.noAction.disabled=True 
+                self.current_image_index+=1 
+                if self.current_image_index > len(self.images)-1:
+                    self.current_image_index=len(self.images) -1
+                self.image.source =  self.images[self.current_image_index]
+                writeToFile(self.image.source)
+                return False
+            else:
+                shutil.copy(self.image.source,mappings[3])
+                self.current_image_index += 1 if self.current_image_index < len(self.images) else  self.current_image_index
+                self.image.source = self.images[self.current_image_index]
+                print(self.image.source)
+                writeToFile(self.image.source)
+                
+                
         
         
     def onDelete(self, instance):
@@ -120,6 +137,7 @@ class ImageViewer(App):
         if self.current_image_index > len(self.images)-1:
             self.current_image_index=len(self.images) -1
         self.image.source =  self.images[self.current_image_index]
+        
         writeToFile(self.image.source)
     
         
@@ -139,7 +157,9 @@ class ImageViewer(App):
             self.noAction.disabled=True 
        
         else:
-            shutil.copy(self.image.source,mappings[3])
+            temp_name =  attachCmd('noAction',self.image.source,mappings[3])
+            shutil.copy(self.image.source,temp_name)
+            #shutil.copy(self.image.source,mappings[3])
             self.current_image_index += 1 if self.current_image_index < len(self.images) else  self.current_image_index
             self.image.source = self.images[self.current_image_index]
         
@@ -153,8 +173,8 @@ class ImageViewer(App):
         if sz >=threshold:
             self.left_button.disabled=True 
         else:
-                
-            shutil.copy(self.image.source,mappings[1])
+            temp_name =  attachCmd('left',self.image.source,mappings[1])
+            shutil.copy(self.image.source,temp_name)
             self.current_image_index += 1 if self.current_image_index < len(self.images) else  self.current_image_index
             self.image.source = self.images[self.current_image_index]
             writeToFile(self.image.source)
@@ -166,8 +186,11 @@ class ImageViewer(App):
             self.right_button.disabled=True 
             
         else:
+            print(mappings)
+            temp_name =  attachCmd('right',self.image.source,mappings[2])
+            shutil.copy(self.image.source,temp_name)
             
-            shutil.copy(self.image.source,mappings[2])
+            #shutil.copy(self.image.source,mappings[2])
             self.current_image_index += 1 if self.current_image_index < len(self.images) else  self.current_image_index
             self.image.source = self.images[self.current_image_index]
             writeToFile(self.image.source)
@@ -178,8 +201,9 @@ class ImageViewer(App):
         if sz >=threshold:
             self.jump_button.disabled=True 
         else:
-                
-            shutil.copy(self.image.source,mappings[0])
+            temp_name =  attachCmd('jump',self.image.source,mappings[0])
+            shutil.copy(self.image.source,temp_name)  
+            #shutil.copy(self.image.source,mappings[0])
             self.current_image_index += 1 if self.current_image_index < len(self.images) else  self.current_image_index
             self.image.source = self.images[self.current_image_index]
             writeToFile(self.image.source)
@@ -191,7 +215,9 @@ class ImageViewer(App):
         if sz >=threshold:
             self.roll_button.disabled=True 
         else:
-            shutil.copy(self.image.source,mappings[4])
+            temp_name =  attachCmd('roll',self.image.source,mappings[4])
+            shutil.copy(self.image.source,temp_name)
+            #shutil.copy(self.image.source,mappings[4])
             self.current_image_index += 1 if self.current_image_index < len(self.images) else  self.current_image_index
             self.image.source = self.images[self.current_image_index]
             writeToFile(self.image.source)
