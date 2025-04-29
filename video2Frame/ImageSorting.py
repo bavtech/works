@@ -158,6 +158,7 @@ class ImageViewer(App):
        
         else:
             temp_name =  attachCmd('noAction',self.image.source,mappings[3])
+            print(temp_name)
             shutil.copy(self.image.source,temp_name)
             #shutil.copy(self.image.source,mappings[3])
             self.current_image_index += 1 if self.current_image_index < len(self.images) else  self.current_image_index
