@@ -7,10 +7,16 @@ import os
 import shutil 
 from tkinter import filedialog 
 import re
+from pathlib import Path
 
-with open("last_seen.txt" ,'r') as file:
+try:
+
+    with open("last_seen.txt" ,'r') as file:
     
-    last_seen = file.readline().strip()
+        last_seen = file.readline().strip()
+except FileNotFoundError:
+    with open('last_seen.txt','a') as file:
+        pass        
 
 def writeToFile(filename:str):
     with open("last_seen.txt",'w') as file:
@@ -25,13 +31,34 @@ def attachCmd(cmd,filename,mapping):
     
     return os.path.join(mapping,fN)
     
+def getFile(name:str):
+
+    try:
+        store=  list(Path('ACTIONS').rglob(f'*{name}*'))
+        return store
+    
+    except StopIteration as e:
+        return False 
+
+def delByPathName(name:list):
+    
+    name = Path(name).name
+
+    files2delete =  getFile(name)
+    for title in files2delete:
+    
+        try:
+            title.unlink()
+        except FileNotFoundError as FNE:
+            pass 
+
 
 def remainder(path):
     totalFile  = len(os.listdir(path))
     
     return totalFile 
     
-threshold = 12000   
+threshold = 21000  
 mappings =  {0:'ACTIONS/jump',1:"ACTIONS/left",2:"ACTIONS/right",3:"ACTIONS/noAction",4:"ACTIONS/roll"}
 class ImageViewer(App):
     def __init__(self, **kwargs):
@@ -117,11 +144,28 @@ class ImageViewer(App):
                 writeToFile(self.image.source)
                 return False
             else:
-                shutil.copy(self.image.source,mappings[3])
+                temp_name =  attachCmd('noAction',self.image.source,mappings[3])
+                shutil.copy(self.image.source,temp_name)
                 self.current_image_index += 1 if self.current_image_index < len(self.images) else  self.current_image_index
                 self.image.source = self.images[self.current_image_index]
-                print(self.image.source)
+                #print(self.image.source)
                 writeToFile(self.image.source)
+        if codepoint == 'm':
+        
+            self.current_image_index+=1 
+            if self.current_image_index > len(self.images)-1:
+                self.current_image_index=len(self.images) -1
+            self.image.source =  self.images[self.current_image_index]
+        
+            writeToFile(self.image.source)
+        if codepoint =='n':
+            self.current_image_index-=1 
+        
+            if self.current_image_index <1:
+                self.current_image_index = 0
+            self.image.source =  self.images[self.current_image_index]
+            writeToFile(self.image.source)
+       
                 
                 
         
@@ -158,7 +202,9 @@ class ImageViewer(App):
        
         else:
             temp_name =  attachCmd('noAction',self.image.source,mappings[3])
-            print(temp_name)
+            #print(temp_name)
+            # this checks if the file exists in another action previously and deletes it before copying it. this eleminates duplicate data
+            delByPathName(self.image.source)
             shutil.copy(self.image.source,temp_name)
             #shutil.copy(self.image.source,mappings[3])
             self.current_image_index += 1 if self.current_image_index < len(self.images) else  self.current_image_index
@@ -175,6 +221,7 @@ class ImageViewer(App):
             self.left_button.disabled=True 
         else:
             temp_name =  attachCmd('left',self.image.source,mappings[1])
+            delByPathName(self.image.source)
             shutil.copy(self.image.source,temp_name)
             self.current_image_index += 1 if self.current_image_index < len(self.images) else  self.current_image_index
             self.image.source = self.images[self.current_image_index]
@@ -187,7 +234,8 @@ class ImageViewer(App):
             self.right_button.disabled=True 
             
         else:
-            print(mappings)
+            #print(mappings)
+            delByPathName(self.image.source)
             temp_name =  attachCmd('right',self.image.source,mappings[2])
             shutil.copy(self.image.source,temp_name)
             
@@ -202,6 +250,7 @@ class ImageViewer(App):
         if sz >=threshold:
             self.jump_button.disabled=True 
         else:
+            delByPathName(self.image.source)
             temp_name =  attachCmd('jump',self.image.source,mappings[0])
             shutil.copy(self.image.source,temp_name)  
             #shutil.copy(self.image.source,mappings[0])
@@ -216,6 +265,7 @@ class ImageViewer(App):
         if sz >=threshold:
             self.roll_button.disabled=True 
         else:
+            delByPathName(self.image.source)
             temp_name =  attachCmd('roll',self.image.source,mappings[4])
             shutil.copy(self.image.source,temp_name)
             #shutil.copy(self.image.source,mappings[4])
