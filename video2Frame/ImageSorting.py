@@ -92,6 +92,10 @@ class ImageViewer(App):
         # Create a horizontal layout for buttons
         buttons_layout = BoxLayout(size_hint=(1, 0.1))
 
+        self.delete = Button(text="Delete")
+        self.delete.bind(on_press=self.onDelete)
+        buttons_layout.add_widget(self.delete)
+
         self.prev = Button(text="PREV")
         self.prev.bind(on_press=self.prevBtn)
         buttons_layout.add_widget(self.prev)
@@ -100,11 +104,6 @@ class ImageViewer(App):
         self.next.bind(on_press=self.nextBtn)
         buttons_layout.add_widget(self.next)
         
-        
-
-        # self.delete = Button(text="Delete")
-        # self.delete.bind(on_press=self.onDelete)
-        # buttons_layout.add_widget(self.delete)
 
         self.noAction = Button(text="NoAction")
         self.noAction.bind(on_press=self.Action)
@@ -171,9 +170,11 @@ class ImageViewer(App):
         
         
     def onDelete(self, instance):
-        os.remove(self.images[self.current_image_index])
-        self.current_image_index +=1 
-        self.image.source  =  self.images[self.current_image_index]
+
+        delByPathName(self.image.source)
+        # os.remove(self.images[self.current_image_index])
+        # self.current_image_index +=1 
+        # self.image.source  =  self.images[self.current_image_index]
          
     def nextBtn(self, instance):
         
