@@ -30,7 +30,7 @@ S_or_M =  "Minute" if video_length > 60 else "Seconds"
 filename =  os.path.splitext(os.path.basename(filepath.name))[0]
 path2save = STORAGE
 counter=1
-starttime =time.time(
+starttime =time.time()
 
 print("The Length of video is {1} {0}".format(S_or_M,VIS if video_length < 60 else VIM))
 
