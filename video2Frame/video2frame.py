@@ -5,7 +5,7 @@ from tkinter import filedialog
 from tkinter import * 
 
 
-filepath = filedialog.askopenfile(title="SELECT VIDEO FILE", filetypes=(("video    files",("*.mp4","*.MP4")),))
+filepath = filedialog.askopenfile(title="SELECT VIDEO FILE", filetypes=(("video    files",("*.mp4","*.MP4","*.AVI","*.avi")),))
 
 video =  cv2.VideoCapture(filepath.name) 
 
@@ -26,12 +26,6 @@ VIS =  video_length
 VIS =  float(f"{VIS:.1f}")
 S_or_M =  "Minute" if video_length > 60 else "Seconds" 
 
-
-filename =  os.path.splitext(os.path.basename(filepath.name))[0]
-path2save = STORAGE
-counter=1
-starttime =time.time()
-
 print("The Length of video is {1} {0}".format(S_or_M,VIS if video_length < 60 else VIM))
 
 
@@ -49,10 +43,13 @@ while True:
         break 
     except ValueError:
         print("Incorrect value  enter a float or an integer , no strings")
-        
-        
+filename =  os.path.splitext(os.path.basename(filepath.name))[0]
+path2save = STORAGE
+counter=1
+starttime =time.time()
 
-
+print(filename)
+#/home/amiltra/Videos/SUB/file/video
 def save(name):
     global counter, starttime,filename
     tmp = name
@@ -69,7 +66,9 @@ def save(name):
             starttime =  time.time()
             
             break
-           
+        
+
+print(STORAGE)      
 while video.isOpened():
     ret, frame = video.read()
     
@@ -94,4 +93,4 @@ video.release()
 cv2.destroyAllWindows() 
 
 
-
+# fist trial 6 file at 5.3 sec 
