@@ -51,7 +51,6 @@ while True:
         print("Incorrect value  enter a float or an integer , no strings")
         
         
-)
 
 
 def save(name):
