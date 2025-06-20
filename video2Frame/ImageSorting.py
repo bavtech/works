@@ -11,15 +11,15 @@ from pathlib import Path
 
 try:
 
-    with open("last_seen.txt" ,'r') as file:
+    with open("checkpoint.txt" ,'r') as file:
     
         last_seen = file.readline().strip()
 except FileNotFoundError:
-    with open('last_seen.txt','a') as file:
+    with open('checkpoint.txt','a') as file:
         pass        
 
 def writeToFile(filename:str):
-    with open("last_seen.txt",'w') as file:
+    with open("checkpoint.txt",'w') as file:
         file.write(filename)
      
 def extract_number(filename):
@@ -58,7 +58,7 @@ def remainder(path):
     
     return totalFile 
     
-threshold = 21000  
+threshold = 60000  
 mappings =  {0:'ACTIONS/jump',1:"ACTIONS/left",2:"ACTIONS/right",3:"ACTIONS/noAction",4:"ACTIONS/roll"}
 class ImageViewer(App):
     def __init__(self, **kwargs):
@@ -196,7 +196,7 @@ class ImageViewer(App):
         writeToFile(self.image.source)
             
             
-    def Action(self, instance):
+    def Action(self, instance): 
         sz =  remainder(mappings[3])
         if sz >=threshold:
             self.noAction.disabled=True 
