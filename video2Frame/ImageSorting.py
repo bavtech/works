@@ -8,78 +8,85 @@ import shutil
 from tkinter import filedialog 
 import re
 from pathlib import Path
+import threading
 
 try:
-
-    with open("checkpoint.txt" ,'r') as file:
-    
+    with open("checkpoint.txt", 'r') as file:
         last_seen = file.readline().strip()
 except FileNotFoundError:
-    with open('checkpoint.txt','a') as file:
+    with open('checkpoint.txt', 'a') as file:
         pass        
 
-def writeToFile(filename:str):
-    with open("checkpoint.txt",'w') as file:
+def writeToFile(filename: str):
+    with open("checkpoint.txt", 'w') as file:
         file.write(filename)
      
 def extract_number(filename):
     return int(filename[:-4])
-def attachCmd(cmd,filename,mapping):
 
-    dirname =  os.path.dirname(filename)
-    fN =  cmd+'_'+os.path.basename(filename)
+def attachCmd(cmd, filename, mapping):
+    dirname = os.path.dirname(filename)
+    fN = cmd + '_' + os.path.basename(filename)
+    return os.path.join(mapping, fN)
     
-    return os.path.join(mapping,fN)
-    
-def getFile(name:str):
-
+def getFile(name: str):
     try:
-        store=  list(Path('ACTIONS').rglob(f'*{name}*'))
+        store = list(Path('ACTIONS').rglob(f'*{name}*'))
         return store
-    
     except StopIteration as e:
         return False 
 
-def delByPathName(name:list):
-    
+def delByPathName(name: list):
     name = Path(name).name
-
-    files2delete =  getFile(name)
+    files2delete = getFile(name)
     for title in files2delete:
-    
         try:
             title.unlink()
         except FileNotFoundError as FNE:
             pass 
-
-
+def ensure_action_dirs_exist():
+    required_dirs = [
+        "ACTIONS/jump",
+        "ACTIONS/left",
+        "ACTIONS/right",
+        "ACTIONS/noAction",
+        "ACTIONS/roll"
+    ]
+    for directory in required_dirs:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+            
+            
 def remainder(path):
-    totalFile  = len(os.listdir(path))
-    
+    totalFile = len(os.listdir(path))
     return totalFile 
-    
-threshold = 60000  
-mappings =  {0:'ACTIONS/jump',1:"ACTIONS/left",2:"ACTIONS/right",3:"ACTIONS/noAction",4:"ACTIONS/roll"}
+
+def threaded_copy(src, dst):
+    """Threaded function to copy files without blocking the UI"""
+    try:
+        shutil.copy(src, dst)
+    except Exception as e:
+        print(f"Error copying file: {e}")
+
+threshold = 70000  
+mappings = {0: 'ACTIONS/jump', 1: "ACTIONS/left", 2: "ACTIONS/right", 
+            3: "ACTIONS/noAction", 4: "ACTIONS/roll"}
+
 class ImageViewer(App):
     def __init__(self, **kwargs):
         super(ImageViewer, self).__init__(**kwargs)
         Window.bind(on_key_down=self.on_key_down)
-        # PTH =  "/media/grey/24B4B6AE7953752A1/TrainingGround/SHOTS/"
-        PTH = filedialog.askdirectory (title="SELECT FOLDER THAT HOUSES FRAMES CAPTURED")+"/"
-        step1 = [i for i in os.listdir(PTH)] # Add your image paths here
-        
-        #sorted_names = sorted(step1, key=extract_number)
+        PTH = filedialog.askdirectory(title="SELECT FOLDER THAT HOUSES FRAMES CAPTURED") + "/"
+        step1 = [i for i in os.listdir(PTH)]        
         sorted_files = sorted(step1, key=lambda f: int(re.search(r'-(\d+)\.jpg$', f).group(1)))
-        self.images =  [PTH+file for file in sorted_files]
+        self.images = [PTH + file for file in sorted_files]
+        
         try:
-            
             index = self.images.index(last_seen)
-            
-            self.current_image_index= index         
+            self.current_image_index = index         
         except Exception as e:
             print(e)
             self.current_image_index = 0
-            
             
         self.image = Image(source=self.images[self.current_image_index])
         self.layout = BoxLayout(orientation='vertical')
@@ -104,7 +111,6 @@ class ImageViewer(App):
         self.next.bind(on_press=self.nextBtn)
         buttons_layout.add_widget(self.next)
         
-
         self.noAction = Button(text="NoAction")
         self.noAction.bind(on_press=self.Action)
         buttons_layout.add_widget(self.noAction)
@@ -125,160 +131,128 @@ class ImageViewer(App):
         self.roll_button.bind(on_press=self.roll_images)
         buttons_layout.add_widget(self.roll_button)
 
-        # Add buttons layout to the main layout
         self.layout.add_widget(buttons_layout)
 
     def on_key_down(self, window, key, scancode, codepoint, modifiers):
-        #print(f"Key pressed: {key} | Codepoint: {codepoint} | Modifiers: {modifiers}")
-        sz =  remainder(mappings[3])
+        sz = remainder(mappings[3])
         
-        if key == 32:
-            #print("Space bar was pressed!")
-            if sz >=threshold:
-                self.noAction.disabled=True 
-                self.current_image_index+=1 
+        if key == 32:  # Space bar
+            if sz >= threshold:
+                self.noAction.disabled = True 
+                self.current_image_index += 1 
                 if self.current_image_index > len(self.images)-1:
-                    self.current_image_index=len(self.images) -1
-                self.image.source =  self.images[self.current_image_index]
+                    self.current_image_index = len(self.images) -1
+                self.image.source = self.images[self.current_image_index]
                 writeToFile(self.image.source)
                 return False
             else:
-                temp_name =  attachCmd('noAction',self.image.source,mappings[3])
-                shutil.copy(self.image.source,temp_name)
-                self.current_image_index += 1 if self.current_image_index < len(self.images) else  self.current_image_index
+                temp_name = attachCmd('noAction', self.image.source, mappings[3])
+                # Start a new thread for copying
+                threading.Thread(target=threaded_copy, args=(self.image.source, temp_name)).start()
+                self.current_image_index += 1 if self.current_image_index < len(self.images) else self.current_image_index
                 self.image.source = self.images[self.current_image_index]
-                #print(self.image.source)
                 writeToFile(self.image.source)
+        
         if codepoint == 'm':
-        
-            self.current_image_index+=1 
+            self.current_image_index += 1 
             if self.current_image_index > len(self.images)-1:
-                self.current_image_index=len(self.images) -1
-            self.image.source =  self.images[self.current_image_index]
-        
+                self.current_image_index = len(self.images) -1
+            self.image.source = self.images[self.current_image_index]
             writeToFile(self.image.source)
-        if codepoint =='n':
-            self.current_image_index-=1 
         
-            if self.current_image_index <1:
+        if codepoint == 'n':
+            self.current_image_index -= 1 
+            if self.current_image_index < 1:
                 self.current_image_index = 0
-            self.image.source =  self.images[self.current_image_index]
+            self.image.source = self.images[self.current_image_index]
             writeToFile(self.image.source)
        
-                
-                
-        
-        
     def onDelete(self, instance):
-
         delByPathName(self.image.source)
-        # os.remove(self.images[self.current_image_index])
-        # self.current_image_index +=1 
-        # self.image.source  =  self.images[self.current_image_index]
          
     def nextBtn(self, instance):
-        
-        self.current_image_index+=1 
+        self.current_image_index += 1 
         if self.current_image_index > len(self.images)-1:
-            self.current_image_index=len(self.images) -1
-        self.image.source =  self.images[self.current_image_index]
-        
+            self.current_image_index = len(self.images) -1
+        self.image.source = self.images[self.current_image_index]
         writeToFile(self.image.source)
     
-        
     def prevBtn(self, instance):
-        
-        self.current_image_index-=1 
-        
-        if self.current_image_index <1:
+        self.current_image_index -= 1 
+        if self.current_image_index < 1:
             self.current_image_index = 0
-        self.image.source =  self.images[self.current_image_index]
+        self.image.source = self.images[self.current_image_index]
         writeToFile(self.image.source)
             
-            
     def Action(self, instance): 
-        sz =  remainder(mappings[3])
-        if sz >=threshold:
-            self.noAction.disabled=True 
-       
+        sz = remainder(mappings[3])
+        if sz >= threshold:
+            self.noAction.disabled = True 
         else:
-            temp_name =  attachCmd('noAction',self.image.source,mappings[3])
-            #print(temp_name)
-            # this checks if the file exists in another action previously and deletes it before copying it. this eleminates duplicate data
+            temp_name = attachCmd('noAction', self.image.source, mappings[3])
             delByPathName(self.image.source)
-            shutil.copy(self.image.source,temp_name)
-            #shutil.copy(self.image.source,mappings[3])
-            self.current_image_index += 1 if self.current_image_index < len(self.images) else  self.current_image_index
+            # Start a new thread for copying
+            threading.Thread(target=threaded_copy, args=(self.image.source, temp_name)).start()
+            self.current_image_index += 1 if self.current_image_index < len(self.images) else self.current_image_index
             self.image.source = self.images[self.current_image_index]
-        
             writeToFile(self.image.source)
-        
-            
 
     def move_left(self, instance):
-        
-        sz =  remainder(mappings[1])
-        if sz >=threshold:
-            self.left_button.disabled=True 
+        sz = remainder(mappings[1])
+        if sz >= threshold:
+            self.left_button.disabled = True 
         else:
-            temp_name =  attachCmd('left',self.image.source,mappings[1])
+            temp_name = attachCmd('left', self.image.source, mappings[1])
             delByPathName(self.image.source)
-            shutil.copy(self.image.source,temp_name)
-            self.current_image_index += 1 if self.current_image_index < len(self.images) else  self.current_image_index
+            # Start a new thread for copying
+            threading.Thread(target=threaded_copy, args=(self.image.source, temp_name)).start()
+            self.current_image_index += 1 if self.current_image_index < len(self.images) else self.current_image_index
             self.image.source = self.images[self.current_image_index]
             writeToFile(self.image.source)
-        
         
     def move_right(self, instance):
-        sz =  remainder(mappings[2])
-        if sz >=threshold:
-            self.right_button.disabled=True 
-            
+        sz = remainder(mappings[2])
+        if sz >= threshold:
+            self.right_button.disabled = True 
         else:
-            #print(mappings)
             delByPathName(self.image.source)
-            temp_name =  attachCmd('right',self.image.source,mappings[2])
-            shutil.copy(self.image.source,temp_name)
-            
-            #shutil.copy(self.image.source,mappings[2])
-            self.current_image_index += 1 if self.current_image_index < len(self.images) else  self.current_image_index
+            temp_name = attachCmd('right', self.image.source, mappings[2])
+            # Start a new thread for copying
+            threading.Thread(target=threaded_copy, args=(self.image.source, temp_name)).start()
+            self.current_image_index += 1 if self.current_image_index < len(self.images) else self.current_image_index
             self.image.source = self.images[self.current_image_index]
             writeToFile(self.image.source)
-        
         
     def jump_image(self, instance):
-        sz =  remainder(mappings[0])
-        if sz >=threshold:
-            self.jump_button.disabled=True 
+        sz = remainder(mappings[0])
+        if sz >= threshold:
+            self.jump_button.disabled = True 
         else:
             delByPathName(self.image.source)
-            temp_name =  attachCmd('jump',self.image.source,mappings[0])
-            shutil.copy(self.image.source,temp_name)  
-            #shutil.copy(self.image.source,mappings[0])
-            self.current_image_index += 1 if self.current_image_index < len(self.images) else  self.current_image_index
+            temp_name = attachCmd('jump', self.image.source, mappings[0])
+            # Start a new thread for copying
+            threading.Thread(target=threaded_copy, args=(self.image.source, temp_name)).start()
+            self.current_image_index += 1 if self.current_image_index < len(self.images) else self.current_image_index
             self.image.source = self.images[self.current_image_index]
             writeToFile(self.image.source)
-        
-# mappings =  {0:'ACTIONS/jump',1:"ACTIONS/left",2:"ACTIONS/right",3:"ACTIONS/noAction",4:"ACTIONS/roll"}
         
     def roll_images(self, instance):
-        sz =  remainder(mappings[4])
-        if sz >=threshold:
-            self.roll_button.disabled=True 
+        sz = remainder(mappings[4])
+        if sz >= threshold:
+            self.roll_button.disabled = True 
         else:
             delByPathName(self.image.source)
-            temp_name =  attachCmd('roll',self.image.source,mappings[4])
-            shutil.copy(self.image.source,temp_name)
-            #shutil.copy(self.image.source,mappings[4])
-            self.current_image_index += 1 if self.current_image_index < len(self.images) else  self.current_image_index
+            temp_name = attachCmd('roll', self.image.source, mappings[4])
+            # Start a new thread for copying
+            threading.Thread(target=threaded_copy, args=(self.image.source, temp_name)).start()
+            self.current_image_index += 1 if self.current_image_index < len(self.images) else self.current_image_index
             self.image.source = self.images[self.current_image_index]
             writeToFile(self.image.source)
-        
         
     def build(self):
         Window.size = (900, 700)  # set initial window size
         return self.layout
 
-
 if __name__ == '__main__':
+    ensure_action_dirs_exist()
     ImageViewer().run()
