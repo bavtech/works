@@ -10,12 +10,35 @@ import re
 from pathlib import Path
 import threading
 
-try:
-    with open("checkpoint.txt", 'r') as file:
-        last_seen = file.readline().strip()
-except FileNotFoundError:
-    with open('checkpoint.txt', 'a') as file:
-        pass        
+
+def ensure_action_dirs_exist():
+    required_dirs = [
+        "ACTIONS/jump",
+        "ACTIONS/left",
+        "ACTIONS/right",
+        "ACTIONS/noAction",
+        "ACTIONS/roll"
+    ]
+    for directory in required_dirs:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+            
+def load_necessary_files():
+    global last_seen, Pic_Dir 
+    
+    #this would first create the Action folder in the current directory where the python script was run from
+    ensure_action_dirs_exist() 
+    try:
+        with open("checkpoint.txt", 'r') as file:
+            last_seen = file.readline().strip()
+            
+            Pic_Dir = os.path.dirname(last_seen)
+            
+
+    except FileNotFoundError:
+        with open('checkpoint.txt', 'a') as file:
+            pass
+        Pic_Dir  =''           
 
 def writeToFile(filename: str):
     with open("checkpoint.txt", 'w') as file:
@@ -44,17 +67,7 @@ def delByPathName(name: list):
             title.unlink()
         except FileNotFoundError as FNE:
             pass 
-def ensure_action_dirs_exist():
-    required_dirs = [
-        "ACTIONS/jump",
-        "ACTIONS/left",
-        "ACTIONS/right",
-        "ACTIONS/noAction",
-        "ACTIONS/roll"
-    ]
-    for directory in required_dirs:
-        if not os.path.exists(directory):
-            os.makedirs(directory)
+
             
             
 def remainder(path):
@@ -68,15 +81,14 @@ def threaded_copy(src, dst):
     except Exception as e:
         print(f"Error copying file: {e}")
 
-threshold = 70000  
-mappings = {0: 'ACTIONS/jump', 1: "ACTIONS/left", 2: "ACTIONS/right", 
-            3: "ACTIONS/noAction", 4: "ACTIONS/roll"}
+
 
 class ImageViewer(App):
     def __init__(self, **kwargs):
         super(ImageViewer, self).__init__(**kwargs)
         Window.bind(on_key_down=self.on_key_down)
-        PTH = filedialog.askdirectory(title="SELECT FOLDER THAT HOUSES FRAMES CAPTURED") + "/"
+        PTH = filedialog.askdirectory(title="SELECT FOLDER THAT HOUSES FRAMES CAPTURED") + "/" if not Pic_Dir else Pic_Dir+'/'  # this mitigates selecting the picture folder everytime
+        #print(PTH)
         step1 = [i for i in os.listdir(PTH)]        
         sorted_files = sorted(step1, key=lambda f: int(re.search(r'-(\d+)\.jpg$', f).group(1)))
         self.images = [PTH + file for file in sorted_files]
@@ -254,5 +266,11 @@ class ImageViewer(App):
         return self.layout
 
 if __name__ == '__main__':
+    #/media/amiltra/BACKUP/vid/video9-20071.jpg
+    threshold = 70000  
+    mappings = {0: 'ACTIONS/jump', 1: "ACTIONS/left", 2: "ACTIONS/right", 
+            3: "ACTIONS/noAction", 4: "ACTIONS/roll"}
+            
     ensure_action_dirs_exist()
+    load_necessary_files()
     ImageViewer().run()
