@@ -26,7 +26,7 @@ def ensure_action_dirs_exist():
 def load_necessary_files():
     global last_seen, Pic_Dir 
     
-    #this would first create the Action folder in the current directory where the python script was run from
+    #this would first create the Action folder in the current directory where the python script was executed from
     ensure_action_dirs_exist() 
     try:
         with open("checkpoint.txt", 'r') as file:
@@ -88,7 +88,7 @@ class ImageViewer(App):
         super(ImageViewer, self).__init__(**kwargs)
         Window.bind(on_key_down=self.on_key_down)
         PTH = filedialog.askdirectory(title="SELECT FOLDER THAT HOUSES FRAMES CAPTURED") + "/" if not Pic_Dir else Pic_Dir+'/'  # this mitigates selecting the picture folder everytime
-        #print(PTH)
+
         step1 = [i for i in os.listdir(PTH)]        
         sorted_files = sorted(step1, key=lambda f: int(re.search(r'-(\d+)\.jpg$', f).group(1)))
         self.images = [PTH + file for file in sorted_files]
@@ -111,10 +111,14 @@ class ImageViewer(App):
         # Create a horizontal layout for buttons
         buttons_layout = BoxLayout(size_hint=(1, 0.1))
 
-        self.delete = Button(text="Delete")
-        self.delete.bind(on_press=self.onDelete)
-        buttons_layout.add_widget(self.delete)
-
+        self.deleteFWD = Button(text="DeleteFWD")
+        self.deleteFWD.bind(on_press=self.onDeleteFWD)
+        buttons_layout.add_widget(self.deleteFWD)
+        
+        self.deleteBWD = Button(text="BWDDelete")
+        self.deleteBWD.bind(on_press=self.onDeleteBWD)
+        buttons_layout.add_widget(self.deleteBWD)
+        
         self.prev = Button(text="PREV")
         self.prev.bind(on_press=self.prevBtn)
         buttons_layout.add_widget(self.prev)
@@ -127,7 +131,7 @@ class ImageViewer(App):
         self.noAction.bind(on_press=self.Action)
         buttons_layout.add_widget(self.noAction)
         
-        self.left_button = Button(text="Left")
+        self.left_button = Button(text="Left")  
         self.left_button.bind(on_press=self.move_left)
         buttons_layout.add_widget(self.left_button)
 
@@ -136,11 +140,11 @@ class ImageViewer(App):
         buttons_layout.add_widget(self.right_button)
 
         self.jump_button = Button(text="Jump")
-        self.jump_button.bind(on_press=self.jump_image)
+        self.jump_button.bind(on_press=self.jump)
         buttons_layout.add_widget(self.jump_button)
 
         self.roll_button = Button(text="Roll")
-        self.roll_button.bind(on_press=self.roll_images)
+        self.roll_button.bind(on_press=self.roll)
         buttons_layout.add_widget(self.roll_button)
 
         self.layout.add_widget(buttons_layout)
@@ -164,7 +168,16 @@ class ImageViewer(App):
                 self.current_image_index += 1 if self.current_image_index < len(self.images) else self.current_image_index
                 self.image.source = self.images[self.current_image_index]
                 writeToFile(self.image.source)
-        
+                
+        if key == 273:  # Up
+            self.jump(None)
+        elif key == 274:  # Down
+            self.roll(None)
+        elif key == 276:  # Left
+            self.move_left(None)
+        elif key == 275:  # Right
+            self.move_right(None)
+       
         if codepoint == 'm':
             self.current_image_index += 1 
             if self.current_image_index > len(self.images)-1:
@@ -179,9 +192,14 @@ class ImageViewer(App):
             self.image.source = self.images[self.current_image_index]
             writeToFile(self.image.source)
        
-    def onDelete(self, instance):
+    def onDeleteFWD(self, instance):
         delByPathName(self.image.source)
-         
+        self.nextBtn(None)
+        
+    def onDeleteBWD(self, instance):
+        delByPathName(self.image.source)
+        self.prevBtn(None) 
+        
     def nextBtn(self, instance):
         self.current_image_index += 1 
         if self.current_image_index > len(self.images)-1:
@@ -235,7 +253,7 @@ class ImageViewer(App):
             self.image.source = self.images[self.current_image_index]
             writeToFile(self.image.source)
         
-    def jump_image(self, instance):
+    def jump(self, instance):
         sz = remainder(mappings[0])
         if sz >= threshold:
             self.jump_button.disabled = True 
@@ -248,7 +266,7 @@ class ImageViewer(App):
             self.image.source = self.images[self.current_image_index]
             writeToFile(self.image.source)
         
-    def roll_images(self, instance):
+    def roll(self, instance):
         sz = remainder(mappings[4])
         if sz >= threshold:
             self.roll_button.disabled = True 
@@ -266,7 +284,7 @@ class ImageViewer(App):
         return self.layout
 
 if __name__ == '__main__':
-    #/media/amiltra/BACKUP/vid/video9-20071.jpg
+
     threshold = 70000  
     mappings = {0: 'ACTIONS/jump', 1: "ACTIONS/left", 2: "ACTIONS/right", 
             3: "ACTIONS/noAction", 4: "ACTIONS/roll"}
