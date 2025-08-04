@@ -49,7 +49,6 @@ counter=1
 starttime =time.time()
 
 print(filename)
-#/home/amiltra/Videos/SUB/file/video
 def save(name):
     global counter, starttime,filename
     tmp = name
@@ -92,5 +91,3 @@ while video.isOpened():
 video.release()
 cv2.destroyAllWindows() 
 
-
-# fist trial 6 file at 5.3 sec 
