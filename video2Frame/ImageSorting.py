@@ -193,12 +193,14 @@ class ImageViewer(App):
             writeToFile(self.image.source)
        
     def onDeleteFWD(self, instance):
+        #deletes first and then move forward
         delByPathName(self.image.source)
         self.nextBtn(None)
         
     def onDeleteBWD(self, instance):
-        delByPathName(self.image.source)
+        #moves back and then deletes
         self.prevBtn(None) 
+        delByPathName(self.image.source)
         
     def nextBtn(self, instance):
         self.current_image_index += 1 
@@ -285,7 +287,7 @@ class ImageViewer(App):
 
 if __name__ == '__main__':
 
-    threshold = 70000  
+    threshold = 75000  
     mappings = {0: 'ACTIONS/jump', 1: "ACTIONS/left", 2: "ACTIONS/right", 
             3: "ACTIONS/noAction", 4: "ACTIONS/roll"}
             
