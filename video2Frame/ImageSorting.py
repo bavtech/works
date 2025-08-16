@@ -89,8 +89,12 @@ class ImageViewer(App):
         Window.bind(on_key_down=self.on_key_down)
         PTH = filedialog.askdirectory(title="SELECT FOLDER THAT HOUSES FRAMES CAPTURED") + "/" if not Pic_Dir else Pic_Dir+'/'  # this mitigates selecting the picture folder everytime
 
-        step1 = [i for i in os.listdir(PTH)]        
-        sorted_files = sorted(step1, key=lambda f: int(re.search(r'-(\d+)\.jpg$', f).group(1)))
+        step1 = [i for i in os.listdir(PTH)]    
+        sorted_files = sorted(step1, key=lambda f: (
+        int(re.search(r'video(\d+)', f).group(1)),  # First sort by video number
+        int(re.search(r'-(\d+)\.jpg$', f).group(1))  # Then sort by frame number
+        ))    
+        #sorted_files = sorted(step1, key=lambda f: int(re.search(r'-(\d+)\.jpg$', f).group(1)))
         self.images = [PTH + file for file in sorted_files]
         
         try:
@@ -287,7 +291,7 @@ class ImageViewer(App):
 
 if __name__ == '__main__':
 
-    threshold = 75000  
+    threshold = 91500  
     mappings = {0: 'ACTIONS/jump', 1: "ACTIONS/left", 2: "ACTIONS/right", 
             3: "ACTIONS/noAction", 4: "ACTIONS/roll"}
             
