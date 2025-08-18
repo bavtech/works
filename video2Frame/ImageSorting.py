@@ -152,7 +152,7 @@ class ImageViewer(App):
         buttons_layout.add_widget(self.roll_button)
 
         self.layout.add_widget(buttons_layout)
-
+    
     def on_key_down(self, window, key, scancode, codepoint, modifiers):
         sz = remainder(mappings[3])
         
@@ -162,6 +162,7 @@ class ImageViewer(App):
                 self.current_image_index += 1 
                 if self.current_image_index > len(self.images)-1:
                     self.current_image_index = len(self.images) -1
+                    self.endOfDoc(None)
                 self.image.source = self.images[self.current_image_index]
                 writeToFile(self.image.source)
                 return False
@@ -169,8 +170,12 @@ class ImageViewer(App):
                 temp_name = attachCmd('noAction', self.image.source, mappings[3])
                 # Start a new thread for copying
                 threading.Thread(target=threaded_copy, args=(self.image.source, temp_name)).start()
-                self.current_image_index += 1 if self.current_image_index < len(self.images) else self.current_image_index
-                self.image.source = self.images[self.current_image_index]
+                #self.current_image_index += 1 if self.current_image_index < len(self.images) else self.current_image_index
+                if (self.current_image_index +1 ) < len(self.images) :
+                    self.current_image_index = self.current_image_index +1 
+                else:
+                    self.current_image_index =  self.current_image_index
+                    self.image.source = self.images[self.current_image_index]
                 writeToFile(self.image.source)
                 
         if key == 273:  # Up
@@ -195,7 +200,13 @@ class ImageViewer(App):
                 self.current_image_index = 0
             self.image.source = self.images[self.current_image_index]
             writeToFile(self.image.source)
-       
+    def endOfDoc(self,instance):
+        self.next.disabled = True 
+        
+    def beginOfDoc(self,instance):
+        self.prev.disabled=True
+        
+          
     def onDeleteFWD(self, instance):
         #deletes first and then move forward
         delByPathName(self.image.source)
@@ -210,13 +221,19 @@ class ImageViewer(App):
         self.current_image_index += 1 
         if self.current_image_index > len(self.images)-1:
             self.current_image_index = len(self.images) -1
+            self.endOfDoc(None)
         self.image.source = self.images[self.current_image_index]
         writeToFile(self.image.source)
     
     def prevBtn(self, instance):
         self.current_image_index -= 1 
+        
+        if self.next.disabled:
+            self.next.disabled=False
+            
         if self.current_image_index < 1:
             self.current_image_index = 0
+            self.beginOfDoc(None)
         self.image.source = self.images[self.current_image_index]
         writeToFile(self.image.source)
             
@@ -229,7 +246,11 @@ class ImageViewer(App):
             delByPathName(self.image.source)
             # Start a new thread for copying
             threading.Thread(target=threaded_copy, args=(self.image.source, temp_name)).start()
-            self.current_image_index += 1 if self.current_image_index < len(self.images) else self.current_image_index
+            if (self.current_image_index +1 ) < len(self.images) :
+                self.current_image_index = self.current_image_index +1 
+            else:
+                self.current_image_index =  self.current_image_index
+            #self.current_image_index += 1 if self.current_image_index  < len(self.images) else self.current_image_index 
             self.image.source = self.images[self.current_image_index]
             writeToFile(self.image.source)
 
@@ -291,10 +312,11 @@ class ImageViewer(App):
 
 if __name__ == '__main__':
 
-    threshold = 91500  
+    threshold = 60000  
     mappings = {0: 'ACTIONS/jump', 1: "ACTIONS/left", 2: "ACTIONS/right", 
             3: "ACTIONS/noAction", 4: "ACTIONS/roll"}
             
     ensure_action_dirs_exist()
     load_necessary_files()
-    ImageViewer().run()
+    program =  ImageViewer()
+    program.run()
