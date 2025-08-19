@@ -87,8 +87,12 @@ class ImageViewer(App):
     def __init__(self, **kwargs):
         super(ImageViewer, self).__init__(**kwargs)
         Window.bind(on_key_down=self.on_key_down)
+        
+        
         PTH = filedialog.askdirectory(title="SELECT FOLDER THAT HOUSES FRAMES CAPTURED") + "/" if not Pic_Dir else Pic_Dir+'/'  # this mitigates selecting the picture folder everytime
-
+        
+            
+            
         step1 = [i for i in os.listdir(PTH)]    
         sorted_files = sorted(step1, key=lambda f: (
         int(re.search(r'video(\d+)', f).group(1)),  # First sort by video number
@@ -219,6 +223,9 @@ class ImageViewer(App):
         
     def nextBtn(self, instance):
         self.current_image_index += 1 
+        
+        if self.prev.disabled:
+            self.prev.disabled=False 
         if self.current_image_index > len(self.images)-1:
             self.current_image_index = len(self.images) -1
             self.endOfDoc(None)
