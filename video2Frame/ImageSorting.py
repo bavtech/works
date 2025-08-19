@@ -88,7 +88,7 @@ class ImageViewer(App):
         super(ImageViewer, self).__init__(**kwargs)
         Window.bind(on_key_down=self.on_key_down)
         
-        
+        self.mappings = mappings = {0: 'ACTIONS/jump', 1: "ACTIONS/left", 2: "ACTIONS/right",3: "ACTIONS/noAction", 4: "ACTIONS/roll"}
         PTH = filedialog.askdirectory(title="SELECT FOLDER THAT HOUSES FRAMES CAPTURED") + "/" if not Pic_Dir else Pic_Dir+'/'  # this mitigates selecting the picture folder everytime
         
             
@@ -105,7 +105,7 @@ class ImageViewer(App):
             index = self.images.index(last_seen)
             self.current_image_index = index         
         except Exception as e:
-            print(e)
+            
             self.current_image_index = 0
             
         self.image = Image(source=self.images[self.current_image_index])
@@ -158,7 +158,7 @@ class ImageViewer(App):
         self.layout.add_widget(buttons_layout)
     
     def on_key_down(self, window, key, scancode, codepoint, modifiers):
-        sz = remainder(mappings[3])
+        sz = remainder(self.mappings[3])
         
         if key == 32:  # Space bar
             if sz >= threshold:
@@ -171,7 +171,7 @@ class ImageViewer(App):
                 writeToFile(self.image.source)
                 return False
             else:
-                temp_name = attachCmd('noAction', self.image.source, mappings[3])
+                temp_name = attachCmd('noAction', self.image.source, self.mappings[3])
                 # Start a new thread for copying
                 threading.Thread(target=threaded_copy, args=(self.image.source, temp_name)).start()
                 #self.current_image_index += 1 if self.current_image_index < len(self.images) else self.current_image_index
@@ -245,11 +245,11 @@ class ImageViewer(App):
         writeToFile(self.image.source)
             
     def Action(self, instance): 
-        sz = remainder(mappings[3])
+        sz = remainder(self.mappings[3])
         if sz >= threshold:
             self.noAction.disabled = True 
         else:
-            temp_name = attachCmd('noAction', self.image.source, mappings[3])
+            temp_name = attachCmd('noAction', self.image.source, self.mappings[3])
             delByPathName(self.image.source)
             # Start a new thread for copying
             threading.Thread(target=threaded_copy, args=(self.image.source, temp_name)).start()
@@ -262,11 +262,11 @@ class ImageViewer(App):
             writeToFile(self.image.source)
 
     def move_left(self, instance):
-        sz = remainder(mappings[1])
+        sz = remainder(self.mappings[1])
         if sz >= threshold:
             self.left_button.disabled = True 
         else:
-            temp_name = attachCmd('left', self.image.source, mappings[1])
+            temp_name = attachCmd('left', self.image.source, self.mappings[1])
             delByPathName(self.image.source)
             # Start a new thread for copying
             threading.Thread(target=threaded_copy, args=(self.image.source, temp_name)).start()
@@ -275,12 +275,12 @@ class ImageViewer(App):
             writeToFile(self.image.source)
         
     def move_right(self, instance):
-        sz = remainder(mappings[2])
+        sz = remainder(self.mappings[2])
         if sz >= threshold:
             self.right_button.disabled = True 
         else:
             delByPathName(self.image.source)
-            temp_name = attachCmd('right', self.image.source, mappings[2])
+            temp_name = attachCmd('right', self.image.source, self.mappings[2])
             # Start a new thread for copying
             threading.Thread(target=threaded_copy, args=(self.image.source, temp_name)).start()
             self.current_image_index += 1 if self.current_image_index < len(self.images) else self.current_image_index
@@ -288,12 +288,12 @@ class ImageViewer(App):
             writeToFile(self.image.source)
         
     def jump(self, instance):
-        sz = remainder(mappings[0])
+        sz = remainder(self.mappings[0])
         if sz >= threshold:
             self.jump_button.disabled = True 
         else:
             delByPathName(self.image.source)
-            temp_name = attachCmd('jump', self.image.source, mappings[0])
+            temp_name = attachCmd('jump', self.image.source, self.mappings[0])
             # Start a new thread for copying
             threading.Thread(target=threaded_copy, args=(self.image.source, temp_name)).start()
             self.current_image_index += 1 if self.current_image_index < len(self.images) else self.current_image_index
@@ -301,12 +301,12 @@ class ImageViewer(App):
             writeToFile(self.image.source)
         
     def roll(self, instance):
-        sz = remainder(mappings[4])
+        sz = remainder(self.mappings[4])
         if sz >= threshold:
             self.roll_button.disabled = True 
         else:
             delByPathName(self.image.source)
-            temp_name = attachCmd('roll', self.image.source, mappings[4])
+            temp_name = attachCmd('roll', self.image.source, self.mappings[4])
             # Start a new thread for copying
             threading.Thread(target=threaded_copy, args=(self.image.source, temp_name)).start()
             self.current_image_index += 1 if self.current_image_index < len(self.images) else self.current_image_index
@@ -320,8 +320,7 @@ class ImageViewer(App):
 if __name__ == '__main__':
 
     threshold = 60000  
-    mappings = {0: 'ACTIONS/jump', 1: "ACTIONS/left", 2: "ACTIONS/right", 
-            3: "ACTIONS/noAction", 4: "ACTIONS/roll"}
+    
             
     ensure_action_dirs_exist()
     load_necessary_files()
