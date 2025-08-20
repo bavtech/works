@@ -176,10 +176,12 @@ class ImageViewer(App):
                 threading.Thread(target=threaded_copy, args=(self.image.source, temp_name)).start()
                 #self.current_image_index += 1 if self.current_image_index < len(self.images) else self.current_image_index
                 if (self.current_image_index +1 ) < len(self.images) :
-                    self.current_image_index = self.current_image_index +1 
+                    self.current_image_index = self.current_image_index +1
+                
                 else:
                     self.current_image_index =  self.current_image_index
-                    self.image.source = self.images[self.current_image_index]
+                
+                self.image.source = self.images[self.current_image_index]
                 writeToFile(self.image.source)
                 
         if key == 273:  # Up
