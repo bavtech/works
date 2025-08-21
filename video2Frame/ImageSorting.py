@@ -194,18 +194,11 @@ class ImageViewer(App):
             self.move_right(None)
        
         if codepoint == 'm':
-            self.current_image_index += 1 
-            if self.current_image_index > len(self.images)-1:
-                self.current_image_index = len(self.images) -1
-            self.image.source = self.images[self.current_image_index]
-            writeToFile(self.image.source)
+            self.nextBtn(None)
         
         if codepoint == 'n':
-            self.current_image_index -= 1 
-            if self.current_image_index < 1:
-                self.current_image_index = 0
-            self.image.source = self.images[self.current_image_index]
-            writeToFile(self.image.source)
+            self.prevBtn(None)
+            
     def endOfDoc(self,instance):
         self.next.disabled = True 
         
