@@ -3,6 +3,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.image import Image
 from kivy.uix.button import Button
 from kivy.core.window import Window
+from kivy.uix.label import Label  # Add this import
 import os 
 import shutil 
 from tkinter import filedialog 
@@ -107,9 +108,22 @@ class ImageViewer(App):
         except Exception as e:
             
             self.current_image_index = 0
-            
+        self.index_label = Label(
+        text=f"       INDEX:\n {self.current_image_index} / {len(self.images)-1}",
+        size_hint=(None, None),
+        size=(200, 50),  # Increased size
+        pos_hint={'left': 1, 'center': 1},
+        color=(1, 1, 1, 1),  # White text
+        bold=True,  # Make text bold
+        font_size='20sp',  # Larger font size
+        padding=(10, 10)  # Add some padding
+        )
+        
+        
         self.image = Image(source=self.images[self.current_image_index])
         self.layout = BoxLayout(orientation='vertical')
+        
+        self.layout.add_widget(self.index_label)
         
         # Add image to the layout and center it horizontally
         image_layout = BoxLayout(size_hint=(1, 0.8))
@@ -156,7 +170,11 @@ class ImageViewer(App):
         buttons_layout.add_widget(self.roll_button)
 
         self.layout.add_widget(buttons_layout)
-    
+        
+    def update_index_label(self):
+        self.index_label.text = f"Index: {self.current_image_index}/{len(self.images)-1}"
+        
+        
     def on_key_down(self, window, key, scancode, codepoint, modifiers):
         sz = remainder(self.mappings[3])
         
@@ -168,6 +186,7 @@ class ImageViewer(App):
                     self.current_image_index = len(self.images) -1
                     self.endOfDoc(None)
                 self.image.source = self.images[self.current_image_index]
+                self.update_index_label()
                 writeToFile(self.image.source)
                 return False
             else:
@@ -182,8 +201,10 @@ class ImageViewer(App):
                     self.current_image_index =  self.current_image_index
                 
                 self.image.source = self.images[self.current_image_index]
+                self.update_index_label()
                 writeToFile(self.image.source)
-                
+        
+               
         if key == 273:  # Up
             self.jump(None)
         elif key == 274:  # Down
@@ -225,6 +246,7 @@ class ImageViewer(App):
             self.current_image_index = len(self.images) -1
             self.endOfDoc(None)
         self.image.source = self.images[self.current_image_index]
+        self.update_index_label()
         writeToFile(self.image.source)
     
     def prevBtn(self, instance):
@@ -237,6 +259,7 @@ class ImageViewer(App):
             self.current_image_index = 0
             self.beginOfDoc(None)
         self.image.source = self.images[self.current_image_index]
+        self.update_index_label()
         writeToFile(self.image.source)
             
     def Action(self, instance): 
@@ -255,6 +278,8 @@ class ImageViewer(App):
             #self.current_image_index += 1 if self.current_image_index  < len(self.images) else self.current_image_index 
             self.image.source = self.images[self.current_image_index]
             writeToFile(self.image.source)
+            
+        self.update_index_label()
 
     def move_left(self, instance):
         sz = remainder(self.mappings[1])
@@ -268,6 +293,7 @@ class ImageViewer(App):
             self.current_image_index += 1 if self.current_image_index < len(self.images) else self.current_image_index
             self.image.source = self.images[self.current_image_index]
             writeToFile(self.image.source)
+        self.update_index_label()
         
     def move_right(self, instance):
         sz = remainder(self.mappings[2])
@@ -281,6 +307,8 @@ class ImageViewer(App):
             self.current_image_index += 1 if self.current_image_index < len(self.images) else self.current_image_index
             self.image.source = self.images[self.current_image_index]
             writeToFile(self.image.source)
+            
+        self.update_index_label()
         
     def jump(self, instance):
         sz = remainder(self.mappings[0])
@@ -295,6 +323,8 @@ class ImageViewer(App):
             self.image.source = self.images[self.current_image_index]
             writeToFile(self.image.source)
         
+        self.update_index_label()
+        
     def roll(self, instance):
         sz = remainder(self.mappings[4])
         if sz >= threshold:
@@ -307,7 +337,8 @@ class ImageViewer(App):
             self.current_image_index += 1 if self.current_image_index < len(self.images) else self.current_image_index
             self.image.source = self.images[self.current_image_index]
             writeToFile(self.image.source)
-        
+            
+        self.update_index_label()
     def build(self):
         Window.size = (900, 700)  # set initial window size
         return self.layout
