@@ -309,7 +309,7 @@ class ImageViewer(App):
             writeToFile(self.image.source)
             
         self.update_index_label()
-        
+   
     def jump(self, instance):
         sz = remainder(self.mappings[0])
         if sz >= threshold:
@@ -324,6 +324,7 @@ class ImageViewer(App):
             writeToFile(self.image.source)
         
         self.update_index_label()
+        
         
     def roll(self, instance):
         sz = remainder(self.mappings[4])
