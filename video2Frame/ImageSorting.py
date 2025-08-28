@@ -71,8 +71,12 @@ def delByPathName(name: list):
 
             
             
-def remainder(path):
+def remainder(path,*Exempt):
+    #pass in the mapping number you want to be exempted. use this in the corresponding action function
     totalFile = len(os.listdir(path))
+    if Exempt:
+        return float('inf')
+        
     return totalFile 
 
 def threaded_copy(src, dst):
