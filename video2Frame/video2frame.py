@@ -10,7 +10,7 @@ filepath = filedialog.askopenfile(title="SELECT VIDEO FILE", filetypes=(("video 
 video =  cv2.VideoCapture(filepath.name) 
 
 
-# Get the number of frames in the video file
+#Get the number of frames in the video file
 total_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
 
 # Calculate the length of the video in seconds
