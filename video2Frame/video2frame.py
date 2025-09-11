@@ -10,10 +10,10 @@ filepath = filedialog.askopenfile(title="SELECT VIDEO FILE", filetypes=(("video 
 video =  cv2.VideoCapture(filepath.name) 
 
 
-#Get the number of frames in the video file
+#this calculates and returns the videos frames i.e frames per seconds
 total_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
 
-# Calculate the length of the video in seconds
+# this should run  and give the length of the video in seconds
 fps = video.get(cv2.CAP_PROP_FPS)
 video_length = total_frames / fps
 
@@ -79,9 +79,7 @@ while video.isOpened():
         if (time.time() -  starttime) >TInterval:
             save(f"{path2save}")
             
-        # sleep(1)
-        #if counter ==100:
-         #   break 
+    
         if cv2.waitKey(int(fps)) & 0xFF == ord('q'):
             
             break
