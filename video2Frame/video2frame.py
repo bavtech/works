@@ -10,10 +10,10 @@ filepath = filedialog.askopenfile(title="SELECT VIDEO FILE", filetypes=(("video 
 video =  cv2.VideoCapture(filepath.name) 
 
 
-#this calculates and returns the videos frames i.e frames per seconds
+# Get the number of frames in the video file
 total_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
 
-# this should run  and give the length of the video in seconds
+# Calculate the length of the video in seconds
 fps = video.get(cv2.CAP_PROP_FPS)
 video_length = total_frames / fps
 
@@ -49,6 +49,7 @@ counter=1
 starttime =time.time()
 
 print(filename)
+#/home/amiltra/Videos/SUB/file/video
 def save(name):
     global counter, starttime,filename
     tmp = name
@@ -68,18 +69,20 @@ def save(name):
         
 
 print(STORAGE)      
+timeStarted =  time.time()
+print(f"Started at {time.ctime()}")            
 while video.isOpened():
     ret, frame = video.read()
     
     if ret:
         
-        # resized = cv2.resize(frame, dim, interpolation = cv2.INTER_AREA)
+        
         cv2.imshow("frame", frame)
         
         if (time.time() -  starttime) >TInterval:
             save(f"{path2save}")
             
-    
+        
         if cv2.waitKey(int(fps)) & 0xFF == ord('q'):
             
             break
@@ -88,4 +91,3 @@ while video.isOpened():
 
 video.release()
 cv2.destroyAllWindows() 
-
