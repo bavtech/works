@@ -91,3 +91,4 @@ while video.isOpened():
 
 video.release()
 cv2.destroyAllWindows() 
+print(f"Stoped at {time.ctime()}")
