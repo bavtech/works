@@ -75,7 +75,7 @@ print(f"Started at {time.ctime()}")
 
 
        
-while video.isOpened():
+#while video.isOpened():
 
 for _ in tqdm(range(total_frames), desc="Extracting video frames"):
    
@@ -84,10 +84,10 @@ for _ in tqdm(range(total_frames), desc="Extracting video frames"):
     if ret:
         
         
-        cv2.imshow("frame", frame)
+        #cv2.imshow("frame", frame)
         
-        if (time.time() -  starttime) >TInterval:
-            save(f"{path2save}")
+        #if (time.time() -  starttime) >TInterval:
+        save(f"{path2save}")
             
         
         if cv2.waitKey(int(fps)) & 0xFF == ord('q'):
