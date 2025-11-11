@@ -3,6 +3,7 @@ from time import sleep
 import time , os 
 from tkinter import filedialog 
 from tkinter import * 
+from tqdm import tqdm
 
 
 filepath = filedialog.askopenfile(title="SELECT VIDEO FILE", filetypes=(("video    files",("*.mp4","*.MP4","*.AVI","*.avi")),))
@@ -70,8 +71,14 @@ def save(name):
 
 print(STORAGE)      
 timeStarted =  time.time()
-print(f"Started at {time.ctime()}")            
+print(f"Started at {time.ctime()}")     
+
+
+       
 while video.isOpened():
+
+for _ in tqdm(range(total_frames), desc="Extracting video frames"):
+   
     ret, frame = video.read()
     
     if ret:
